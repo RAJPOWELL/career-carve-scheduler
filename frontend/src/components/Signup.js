@@ -6,21 +6,29 @@ import './Signup.css';
 
 const Signup = () => {
     const [name, setName] = useState('');
-    const [areaOfInterest, setAreaOfInterest] = useState('');
+    const [companyName, setCompanyName] = useState(''); // New field for mentor
     const [role, setRole] = useState('student');
+    const [password, setPassword] = useState(''); // Password field
     const navigate = useNavigate();
 
     const handleSignup = () => {
-        const signupData = { name, area_of_interest: areaOfInterest, role };
+        // Prepare signup data
+        const signupData = { 
+            name, 
+            company_name: role === 'mentor' ? companyName : null, 
+            role, 
+            password 
+        };
 
+        // Send signup request
         axios.post('http://localhost:5000/api/auth/signup', signupData)
             .then(response => {
                 alert('Signup successful!');
                 navigate('/login'); // Redirect to login page after successful signup
             })
             .catch(err => {
-                console.error(err);
-                alert('Error during signup. Please try again.');
+                console.error(err); // Log the error
+                alert('Error during signup. Please try again.'); // Alert on error
             });
     };
 
@@ -34,16 +42,26 @@ const Signup = () => {
                 onChange={e => setName(e.target.value)}
                 className="input-field"
             />
-            <select onChange={e => setAreaOfInterest(e.target.value)} value={areaOfInterest} className="input-field">
-                <option value="">Select Area of Interest</option>
-                <option value="FMCG Sales">FMCG Sales</option>
-                <option value="Equity Research">Equity Research</option>
-                <option value="Digital Marketing">Digital Marketing</option>
-            </select>
+            {role === 'mentor' && ( // Show company name field only for mentors
+                <input
+                    type="text"
+                    placeholder="Company Name"
+                    value={companyName}
+                    onChange={e => setCompanyName(e.target.value)}
+                    className="input-field"
+                />
+            )}
             <select onChange={e => setRole(e.target.value)} value={role} className="input-field">
                 <option value="student">Student</option>
                 <option value="mentor">Mentor</option>
             </select>
+            <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="input-field"
+            />
             <button onClick={handleSignup} className="submit-button">Signup</button>
             <p>
                 Already have an account? <Link to="/login">Login</Link>

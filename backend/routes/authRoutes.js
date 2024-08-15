@@ -5,30 +5,48 @@ const router = express.Router();
 
 // Signup route
 router.post('/signup', (req, res) => {
-    const { name, area_of_interest, role } = req.body;
-    const table = role === 'mentor' ? 'mentors' : 'students';
-    
-    db.run(`INSERT INTO ${table} (name, area_of_interest) VALUES (?, ?)`, [name, area_of_interest], function(err) {
+    const { name, company_name, role, password } = req.body;
+
+    // Determine the SQL query and parameters based on the role
+    let sql;
+    let params;
+
+    if (role === 'mentor') {
+        sql = `INSERT INTO mentors (name, company_name, password) VALUES (?, ?, ?)`;
+        params = [name, company_name, password];
+    } else {
+        sql = `INSERT INTO students (name, password) VALUES (?, ?)`;
+        params = [name, password];
+    }
+
+    // Log the SQL query and parameters for debugging
+    console.log('SQL Query:', sql);
+    console.log('Parameters:', params);
+
+    db.run(sql, params, function(err) {
         if (err) {
-            return res.status(500).send(err.message);
+            console.error('Signup error:', err.message); // Log the error message
+            return res.status(500).send('Error during signup. Please try again.'); // Send a generic error message
         }
-        res.json({ id: this.lastID, name, area_of_interest });
+        res.json({ id: this.lastID, name, company_name });
     });
 });
 
+// ... (rest of your code)
 // Login route
 router.post('/login', (req, res) => {
-    const { name, role } = req.body;
+    const { name, role, password } = req.body;
     const table = role === 'mentor' ? 'mentors' : 'students';
 
-    db.get(`SELECT * FROM ${table} WHERE name = ?`, [name], (err, row) => {
+    db.get(`SELECT * FROM ${table} WHERE name = ? AND password = ?`, [name, password], (err, row) => {
         if (err) {
+            console.error('Login error:', err.message); // Log the error message
             return res.status(500).send(err.message);
         }
         if (row) {
             res.json(row);
         } else {
-            res.status(404).send('User not found');
+            res.status(404).send('User not found or incorrect password');
         }
     });
 });

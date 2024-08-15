@@ -17,14 +17,14 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS mentors (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        area_of_interest TEXT NOT NULL,
-        available_time TEXT NOT NULL
+        company_name TEXT,
+        password TEXT NOT NULL
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        area_of_interest TEXT NOT NULL
+        password TEXT NOT NULL
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS sessions (
@@ -37,6 +37,8 @@ db.serialize(() => {
         FOREIGN KEY (mentor_id) REFERENCES mentors(id)
     )`);
 });
+
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/mentors', mentorRoutes);
