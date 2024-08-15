@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // Import CSS for styling
+import './Login.css'; 
 
 const Login = () => {
     const [name, setName] = useState(''); // State for storing the user's name

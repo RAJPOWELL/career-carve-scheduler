@@ -21,6 +21,11 @@ const Scheduler = () => {
     }, []);
 
     const handleSchedule = () => {
+        if (!studentName || !areaOfInterest || !selectedMentor || !sessionTime) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
         const studentData = { name: studentName, area_of_interest: areaOfInterest };
 
         axios.post('http://localhost:5000/api/students', studentData)
@@ -45,7 +50,7 @@ const Scheduler = () => {
                 fetchMentors(); // Refresh mentor list after scheduling
             })
             .catch(err => {
-                console.error(err);
+                console.error('Error scheduling session:', err);
                 alert('Error scheduling session. Please check your input and try again.');
             });
     };
